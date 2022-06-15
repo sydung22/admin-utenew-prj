@@ -297,26 +297,39 @@
                     </v-card>
                   </template>
                 </v-dialog>
-                <v-btn class="ma-2" color="red" dark>
+                <v-btn class="ma-2" color="red" dark @click="handleRow(item)">
                   Xóa
                   <v-icon dark right> mdi-delete </v-icon>
                 </v-btn>
               </template>
               <template v-slot:no-data>
-                <v-btn color="primary"> Reset </v-btn>
+                <p class="my-2">Không có dữ liệu</p>
               </template>
             </v-data-table>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
+    <popup
+      :show="showDialogDelete"
+      :cancel="cancel"
+      :confirm="DeleteItem"
+      text="Đồng ý"
+      title="Thông báo!"
+      textCancel="Không"
+      description="Bạn có muốn xóa dữ liệu này không ???"
+    ></popup>
   </div>
 </template>
 <script>
 import axios from "axios";
 import { mapState } from "vuex";
+import AuthService from "@/services/authService.js";
+
+import Popup from "../components/Popup.vue";
 
 export default {
+  components: { Popup },
   data() {
     return {
       header: [
@@ -372,7 +385,25 @@ export default {
       const resData = await axios.get("http://127.0.0.1:8080/api/user");
       const details = [...resData.data.user].find((el) => el.id === this.detailsId);
       this.detailsItem = details;
-      console.log(this.detailsItem);
+      console.log(this.detailsId);
+    },
+    cancel() {
+      this.showDialogDelete = false;
+    },
+    handleRow(item) {
+      this.deleteId = item.id;
+      this.showDialogDelete = true;
+    },
+    async DeleteItem() {
+      const res = await AuthService.deleteUser(this.deleteId);
+      if (res && res.status === "success") {
+        alert("Xóa thành công");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else {
+        window.console.log("ko thành công");
+      }
     },
     async createUser() {
       this.initAuthHeader();

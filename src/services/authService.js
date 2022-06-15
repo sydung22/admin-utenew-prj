@@ -65,6 +65,18 @@ const AuthService = {
 
     return res.data;
   },
+  async deleteHashtag(id) {
+    const res = await axios.delete(`http://127.0.0.1:8080/api/hashtag/${id}`);
+
+    if (res.status === 200) {
+      this.initAuthHeader();
+      return res.data;
+    } else {
+      window.console.log("ko thành công");
+    }
+
+    return res.data;
+  },
   async comment(data) {
     try {
       this.initAuthHeader();
@@ -171,20 +183,6 @@ const AuthService = {
     }
   },
   async createHashtag(data) {
-    try {
-      this.initAuthHeader();
-      const res = await axios.post("http://127.0.0.1:8080/api/hashtag", data);
-      if (res.status === 201) {
-        return res.data;
-      } else {
-        window.console.log("ko thành công");
-      }
-      return res.data;
-    } catch (e) {
-      window.console.log("ko thành công");
-    }
-  },
-  async deleteHashtag(data) {
     try {
       this.initAuthHeader();
       const res = await axios.post("http://127.0.0.1:8080/api/hashtag", data);
@@ -317,6 +315,36 @@ const AuthService = {
   async user() {
     try {
       const res = await axios.get("http://127.0.0.1:8080/api/user");
+      if (res.status === 200) {
+        return res.data;
+      } else {
+        window.console.log("ko thành công");
+      }
+      return res.data;
+    } catch (e) {
+      window.console.log("ko thành công");
+    }
+  },
+  async deleteReport(id) {
+    try {
+      this.initAuthHeader();
+      const res = await axios.delete(`http://127.0.0.1:8080/api/report/${id}`);
+
+      if (res.status === 200) {
+        return res.data;
+      } else {
+        window.console.log("ko thành công");
+      }
+      return res.data;
+    } catch (e) {
+      window.console.log("ko thành công");
+    }
+  },
+  async deleteUser(id) {
+    try {
+      this.initAuthHeader();
+      const res = await axios.delete(`http://127.0.0.1:8080/api/user/${id}`);
+
       if (res.status === 200) {
         return res.data;
       } else {

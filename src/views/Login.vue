@@ -441,19 +441,24 @@ export default {
         this.passShow = true;
       } else {
         this.showLoading = true;
-        const res = await AuthService.login({
-          email: this.user.email,
-          password: this.user.password,
-        });
+        try {
+          const res = await AuthService.login({
+            email: this.user.email,
+            password: this.user.password,
+          });
 
-        if (res && res.access_token !== "") {
-          window.console.log(res);
-          const tokenUser = localStorage.getItem("token");
-          console.log(tokenUser);
+          if (res && res.access_token !== "") {
+            window.console.log(res);
+            const tokenUser = localStorage.getItem("token");
+            console.log(tokenUser);
+            this.showLoading = false;
+            this.$router.push("/").catch(() => {});
+          } else {
+            window.console.log("ko thành công");
+          }
+        } catch {
           this.showLoading = false;
-          this.$router.push("/").catch(() => {});
-        } else {
-          window.console.log("ko thành công");
+          alert("Đăng nhập không thành công");
         }
       }
     },

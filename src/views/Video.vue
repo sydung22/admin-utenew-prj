@@ -116,6 +116,32 @@
                                         readonly
                                       ></v-text-field>
                                     </v-col>
+
+                                    <v-col cols="12" md="12" class="pb-0 pt-1">
+                                      <v-text-field
+                                        label="Tên người dùng"
+                                        :value="detailsUser.fullname"
+                                        required
+                                        readonly
+                                      ></v-text-field>
+                                    </v-col>
+
+                                    <v-col cols="12" md="12" class="pb-0 pt-1">
+                                      <v-text-field
+                                        label="Email"
+                                        :value="detailsUser.email"
+                                        required
+                                        readonly
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="12" class="pb-0 pt-1">
+                                      <v-text-field
+                                        label="Xu cá nhân"
+                                        :value="detailsUser.coins"
+                                        required
+                                        readonly
+                                      ></v-text-field>
+                                    </v-col>
                                   </v-row>
                                 </v-container>
                               </v-form>
@@ -123,7 +149,7 @@
                             <v-col cols="12" sm="6" class="text-center">
                               <video
                                 class="block w-full h-auto object-cover rounded-md videoplay"
-                                style="display: block; width: 100%; height: 440px; object-fit: cover; border-radius: 10px"
+                                style="display: block; width: 100%; height: 645px; object-fit: contain; border-radius: 10px"
                                 controls
                                 :src="detailsItem.url"
                                 :poster="detailsItem.cover"
@@ -148,20 +174,32 @@
                 </v-btn>
               </template>
               <template v-slot:no-data>
-                <v-btn color="primary"> Reset </v-btn>
+                <p class="my-2">Không có dữ liệu</p>
               </template>
             </v-data-table>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
+    <popup
+      :show="showDialogDelete"
+      :cancel="cancel"
+      :confirm="DeleteItem"
+      text="Đồng ý"
+      title="Thông báo!"
+      textCancel="Không"
+      description="Bạn có muốn xóa dữ liệu này không ???"
+    ></popup>
   </div>
 </template>
 <script>
 import axios from "axios";
 import { mapState } from "vuex";
+import AuthService from "@/services/authService.js";
+import Popup from "../components/Popup.vue";
 
 export default {
+  components: { Popup },
   data() {
     return {
       header: [
@@ -199,6 +237,7 @@ export default {
       showDialogUpdate: false,
       editedIndex: -1,
       readChange: false,
+      detailsUser: {},
     };
   },
   methods: {
@@ -209,19 +248,29 @@ export default {
         (el) => el.id === this.detailsId
       );
       this.detailsItem = details;
+      this.detailsUser = details.user;
       console.log(this.detailsItem);
-    },
-    async createUser() {
-      const res = await axios.post(
-        "http://127.0.0.1:8080/api/auth/register",
-        this.user
-      );
-      console.log(res);
-      alert("Cập nhật thành công");
-      this.dialog = false;
     },
     close() {
       this.dialog = false;
+    },
+    cancel() {
+      this.showDialogDelete = false;
+    },
+    handleRow(item) {
+      this.deleteId = item.id;
+      this.showDialogDelete = true;
+    },
+    async DeleteItem() {
+      const res = await AuthService.deleteVideo(this.deleteId);
+      if (res && res.status === "success") {
+        alert("Xóa thành công");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else {
+        window.console.log("ko thành công");
+      }
     },
   },
   async mounted() {

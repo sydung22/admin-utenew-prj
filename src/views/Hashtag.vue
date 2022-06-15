@@ -59,7 +59,7 @@
                         <v-card-text class="pb-0">
                           <v-container class="px-0 pt-13 pb-0">
                             <h1 class="px-5 py-0 pb-5 text-center primary--text">
-                              Thông Tin Phòng Ban
+                              Thông Tin Hashtag
                             </h1>
                             <v-row align="center" justify="center" class="">
                               <v-col cols="12" sm="12" class="text-center pt-0">
@@ -116,25 +116,38 @@
                       </v-card>
                     </template>
                   </v-dialog>
-                  <v-btn class="ma-2" color="red" dark @click="DeleteHashtag(item)">
+                  <v-btn class="ma-2" color="red" dark @click="handleRow(item)">
                     Xóa
                     <v-icon dark right> mdi-delete </v-icon>
                   </v-btn>
                 </div>
               </template>
               <template v-slot:no-data>
-                <v-btn color="primary"> Reset </v-btn>
+                <p class="my-2">Không có dữ liệu</p>
               </template>
             </v-data-table>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
+    <popup
+      :show="showDialogDelete"
+      :cancel="cancel"
+      :confirm="DeleteItem"
+      text="Đồng ý"
+      title="Thông báo!"
+      textCancel="Không"
+      description="Bạn có muốn xóa dữ liệu này không ???"
+    ></popup>
   </div>
 </template>
 <script>
 import axios from "axios";
+import AuthService from "@/services/authService.js";
+import Popup from "../components/Popup.vue";
+
 export default {
+  components: { Popup },
   data() {
     return {
       header: [
@@ -189,9 +202,8 @@ export default {
     };
   },
   async mounted() {
-    const res = await axios.get(`http://127.0.0.1:8080/api/hashtag`);
-    console.log(res.data);
-    this.hashtag = res.data.hashtag;
+    const res = await AuthService.hashtag();
+    this.hashtag = res.hashtag;
   },
   computed: {
     formTitle() {
@@ -218,14 +230,23 @@ export default {
       this.detailsItem = details;
       console.log(this.detailsItem);
     },
-    async DeleteHashtag(item) {
-      this.detailsId = item.id;
-      this.initAuthHeader();
-      const resData = await axios.delete(
-        `http://127.0.0.1:8080/api/hashtag/${this.detailsId}`
-      );
-      console.log(resData);
-      alert("Xóa thành công");
+    cancel() {
+      this.showDialogDelete = false;
+    },
+    handleRow(item) {
+      this.deleteId = item.id;
+      this.showDialogDelete = true;
+    },
+    async DeleteItem() {
+      const res = await AuthService.deleteHashtag(this.deleteId);
+      if (res && res.status === "success") {
+        alert("Xóa thành công");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else {
+        window.console.log("ko thành công");
+      }
     },
 
     close() {

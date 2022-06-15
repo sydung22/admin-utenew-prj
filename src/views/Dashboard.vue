@@ -10,7 +10,7 @@
     </v-subheader>
     <br />
     <v-row>
-      <v-col lg="7" cols="12">
+      <v-col lg="12" cols="12">
         <v-alert dense text type="success">
           Xin Chào Bạn! Chào mừng bạn đến với <strong>UTENews</strong>
         </v-alert>
@@ -35,7 +35,7 @@
           </v-col>
         </v-row>
       </v-col>
-      <v-col cols="12" lg="5">
+      <!-- <v-col cols="12" lg="5">
         <v-card>
           <v-card-title>Hoạt Động Gần Đây</v-card-title>
           <v-card-text class="py-0">
@@ -62,7 +62,7 @@
             </v-timeline>
           </v-card-text>
         </v-card>
-      </v-col>
+      </v-col> -->
       <v-col cols="12">
         <v-card>
           <v-data-table
@@ -214,7 +214,7 @@ export default {
           color: "blue-grey darken-1",
         },
         {
-          title: "Tổng số bài đăng",
+          title: "Tổng số Report",
           amount: 3433,
           icon: "mdi-account-group-outline",
           color: "deep-orange darken-1",
@@ -286,14 +286,22 @@ export default {
     };
   },
   async mounted() {
+    const resCountUser = await AuthService.user();
+    const resCountVideo = await AuthService.video();
+    const resCountHashtag = await AuthService.hashtag();
+    const resCountReport = await AuthService.report();
+
+    this.activityLog[0].amount = resCountUser.user.length;
+    this.activityLog[1].amount = resCountVideo.videos.length;
+    this.activityLog[2].amount = resCountHashtag.hashtag.length;
+    this.activityLog[3].amount = resCountReport.reports.length;
+
     const res = await AuthService.admin();
     if (res && res.status === "success") {
       this.dessertsTopVideo = res.data.top_videos_most_views;
       this.dessertsTopLike = res.data.top_videos_most_likes;
       this.dessertsTopCoin = res.data.top_users_most_working;
       this.dessertsTopFollow = res.data.top_users_most_follows;
-      console.log(res);
-      window.console.log("thành công");
     } else {
       window.console.log("ko thành công");
     }

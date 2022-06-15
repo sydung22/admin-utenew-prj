@@ -76,7 +76,7 @@
                                     <v-col cols="12" md="12" class="pb-0 pt-1">
                                       <v-text-field
                                         label="Mã Người Báo Cáo"
-                                        :value="detailsItem.id"
+                                        :value="detailsUser.id"
                                         required
                                         readonly
                                       ></v-text-field>
@@ -85,7 +85,15 @@
                                     <v-col cols="12" md="12" class="pb-0 pt-1">
                                       <v-text-field
                                         label="Tên Người Báo Cáo"
-                                        :value="detailsItem.fullname"
+                                        :value="detailsUser.fullname"
+                                        required
+                                        readonly
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="12" class="pb-0 pt-1">
+                                      <v-text-field
+                                        label="Email Người Báo Cáo"
+                                        :value="detailsUser.email"
                                         required
                                         readonly
                                       ></v-text-field>
@@ -110,7 +118,7 @@
                                     <v-col cols="12" md="12" class="pb-0 pt-1">
                                       <v-text-field
                                         label="Đường dẫn video"
-                                        :value="detailsItem.video.url"
+                                        :value="detailsVideo.url"
                                         required
                                         readonly
                                       ></v-text-field>
@@ -119,7 +127,7 @@
                                     <v-col cols="12" md="12" class="pb-0 pt-1">
                                       <v-text-field
                                         label="Nội dung"
-                                        :value="detailsItem.video.description"
+                                        :value="detailsVideo.description"
                                         required
                                         readonly
                                       ></v-text-field>
@@ -128,7 +136,7 @@
                                     <v-col cols="12" md="12" class="pb-0 pt-1">
                                       <v-text-field
                                         label="Lượt xem"
-                                        :value="detailsItem.video.views"
+                                        :value="detailsVideo.views"
                                         required
                                         readonly
                                       ></v-text-field>
@@ -140,10 +148,10 @@
                             <v-col cols="12" sm="6" class="text-center">
                               <video
                                 class="block w-full h-auto object-cover rounded-md videoplay"
-                                style="display: block; width: 100%; height: 440px; object-fit: cover; border-radius: 10px"
+                                style="display: block; width: 100%; height: 645px; object-fit: contain; border-radius: 10px"
                                 controls
-                                :src="detailsItem.video.url"
-                                :poster="detailsItem.video.cover"
+                                :src="detailsVideo.url"
+                                :poster="detailsVideo.cover"
                                 muted
                                 autoplay
                               ></video>
@@ -165,13 +173,22 @@
                 </v-btn>
               </template>
               <template v-slot:no-data>
-                <v-btn color="primary"> Reset </v-btn>
+                <p class="my-2">Không có dữ liệu</p>
               </template>
             </v-data-table>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
+    <popup
+      :show="showDialogDelete"
+      :cancel="cancel"
+      :confirm="DeleteItem"
+      text="Đồng ý"
+      title="Thông báo!"
+      textCancel="Không"
+      description="Bạn có muốn xóa dữ liệu này không ???"
+    ></popup>
   </div>
 </template>
 <script>
@@ -179,8 +196,10 @@ import AuthService from "@/services/authService.js";
 
 // import axios from "axios";
 import { mapState } from "vuex";
+import Popup from "../components/Popup.vue";
 
 export default {
+  components: { Popup },
   data() {
     return {
       header: [
@@ -235,19 +254,37 @@ export default {
       showDialogUpdate: false,
       editedIndex: -1,
       readChange: false,
+      detailsVideo: {},
+      detailsUser: {},
     };
   },
   methods: {
+    cancel() {
+      this.showDialogDelete = false;
+    },
     async DetailsUser(item) {
       this.detailsId = item.id;
       const resData = await AuthService.report();
       if (resData && resData.status === "success") {
         const details = resData.reports.find((el) => el.id === this.detailsId);
         this.detailsItem = details;
-        console.log(this.detailsItem);
-        console.log(resData.reports);
-        console.log(this.detailsId);
-        console.log(item.id);
+        this.detailsVideo = details.video;
+        this.detailsUser = details.user;
+      }
+    },
+    handleRow(item) {
+      this.deleteId = item.id;
+      this.showDialogDelete = true;
+    },
+    async DeleteItem() {
+      const res = await AuthService.deleteReport(this.deleteId);
+      if (res && res.status === "success") {
+        alert("Xóa thành công");
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else {
+        window.console.log("ko thành công");
       }
     },
     Detail(item) {

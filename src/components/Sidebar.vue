@@ -76,17 +76,17 @@ export default {
           action: "user",
         },
         {
-          icon: "mdi-account-multiple",
+          icon: "mdi-video-box",
           title: "Bài Đăng",
           action: "video",
         },
         {
-          icon: "mdi-home-city",
+          icon: "mdi-album",
           title: "Hashtag",
           action: "hashtag",
         },
         {
-          icon: "mdi-home-city",
+          icon: "mdi-file-chart",
           title: "Báo Cáo",
           action: "report",
         },
