@@ -411,9 +411,11 @@ export default {
         "http://127.0.0.1:8080/api/admin/user",
         this.user
       );
+      this.dialog = false;
+
       console.log(res);
       alert("Cập nhật thành công");
-      this.dialog = false;
+      window.location.reload();
     },
     close() {
       this.dialog = false;
