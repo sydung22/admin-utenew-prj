@@ -74,8 +74,8 @@
       :show="showDialog"
       :cancel="cancel"
       :confirm="confirm"
-      text="Có! Mình muốn đăng xuất ^^"
-      textCancel="Không nha :v"
+      text="Đồng ý"
+      textCancel="Hủy"
       title="Thông báo?"
       description="Bạn có muốn đăng xuất không ???"
     ></popup>

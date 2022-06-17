@@ -1,105 +1,82 @@
 <template>
-  <div class="preloader" :style="cssVars">
-    <span class="rot-1"></span>
-    <span class="rot-2"></span>
-    <span class="rot-3"></span>
-    <span class="rot-4"></span>
-    <span class="rot-5"></span>
-    <span class="rot-6"></span>
-    <span class="rot-7"></span>
-    <span class="rot-8"></span>
+  <div class="overlay">
+    <div class="spinner">
+      <div class="double-bounce1"></div>
+      <div class="double-bounce2"></div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "Preloader",
-  props: {
-    color: {
-      type: String,
-      default: "#41b883",
-    },
-    scale: {
-      type: String,
-      default: "1",
-    },
-  },
-  computed: {
-    cssVars() {
-      return {
-        "--color": this.color,
-        "--scale": this.scale,
-      };
-    },
-  },
 };
 </script>
 
 <style scoped>
-.preloader {
+.overlay {
+  --tw-bg-opacity: 1;
+  background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
+  --tw-bg-opacity: 0.5;
+  height: 100%;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  z-index: 10;
+}
+.spinner {
+  width: 60px;
+  height: 60px;
+  top: 50%;
+  left: 50%;
   position: relative;
-  width: 125px;
-  height: 125px;
-  margin: auto;
-  transform: scale(var(--scale));
+  transform: translate(-50%, -50%);
+  /* margin: 100px auto; */
+  z-index: 100;
 }
-.preloader > span {
+
+.double-bounce1,
+.double-bounce2 {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #fff;
+  opacity: 0.6;
   position: absolute;
-  background-color: transparent;
-  height: 22px;
-  width: 22px;
-  border-radius: 12px;
-  animation-name: f_fadeG;
-  animation-duration: 1.2s;
-  animation-iteration-count: infinite;
-  animation-direction: normal;
-}
-.rot-1 {
-  left: 0;
-  top: 51px;
-  animation-delay: 0.45s;
-}
-.rot-2 {
-  left: 15px;
-  top: 15px;
-  animation-delay: 0.6s;
-}
-.rot-3 {
-  left: 51px;
   top: 0;
-  animation-delay: 0.75s;
+  left: 0;
+
+  -webkit-animation: sk-bounce 2s infinite ease-in-out;
+  animation: sk-bounce 2s infinite ease-in-out;
 }
-.rot-4 {
-  right: 15px;
-  top: 15px;
-  animation-delay: 0.9s;
+
+.double-bounce2 {
+  -webkit-animation-delay: -1s;
+  animation-delay: -1s;
 }
-.rot-5 {
-  right: 0;
-  top: 51px;
-  animation-delay: 1.05s;
-}
-.rot-6 {
-  right: 15px;
-  bottom: 15px;
-  animation-delay: 1.2s;
-}
-.rot-7 {
-  left: 51px;
-  bottom: 0;
-  animation-delay: 1.35s;
-}
-.rot-8 {
-  left: 15px;
-  bottom: 15px;
-  animation-delay: 1.5s;
-}
-@keyframes f_fadeG {
-  0% {
-    background-color: var(--color);
-  }
+
+@-webkit-keyframes sk-bounce {
+  0%,
   100% {
-    background-color: transparent;
+    -webkit-transform: scale(0);
+  }
+  50% {
+    -webkit-transform: scale(1);
+  }
+}
+
+@keyframes sk-bounce {
+  0%,
+  100% {
+    transform: scale(0);
+    -webkit-transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+    -webkit-transform: scale(1);
   }
 }
 </style>

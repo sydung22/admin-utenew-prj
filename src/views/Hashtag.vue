@@ -128,6 +128,7 @@
             </v-data-table>
           </v-card>
         </v-col>
+        <loading v-show="showLoading"></loading>
       </v-row>
     </v-container>
     <popup
@@ -145,9 +146,10 @@
 import axios from "axios";
 import AuthService from "@/services/authService.js";
 import Popup from "../components/Popup.vue";
+import Loading from "../components/Loading.vue";
 
 export default {
-  components: { Popup },
+  components: { Popup, Loading },
   data() {
     return {
       header: [
@@ -199,6 +201,7 @@ export default {
       showDialogUpdate: false,
       qtyDepartment: [],
       editedIndex: -1,
+      showLoading: false,
     };
   },
   async mounted() {
@@ -238,14 +241,17 @@ export default {
       this.showDialogDelete = true;
     },
     async DeleteItem() {
+      this.showLoading = true;
       const res = await AuthService.deleteHashtag(this.deleteId);
       if (res && res.status === "success") {
-        alert("Xóa thành công");
+        this.showLoading = false;
         setTimeout(() => {
+          alert("Xóa thành công");
           window.location.reload();
         }, 500);
       } else {
-        window.console.log("ko thành công");
+        this.showLoading = false;
+        alert("Xóa không thành công");
       }
     },
 

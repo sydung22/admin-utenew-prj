@@ -178,6 +178,7 @@
             </v-data-table>
           </v-card>
         </v-col>
+        <loading v-show="showLoading"></loading>
       </v-row>
     </v-container>
     <popup
@@ -197,9 +198,10 @@ import AuthService from "@/services/authService.js";
 // import axios from "axios";
 import { mapState } from "vuex";
 import Popup from "../components/Popup.vue";
+import Loading from "../components/Loading.vue";
 
 export default {
-  components: { Popup },
+  components: { Popup, Loading },
   data() {
     return {
       header: [
@@ -256,6 +258,7 @@ export default {
       readChange: false,
       detailsVideo: {},
       detailsUser: {},
+      showLoading: false,
     };
   },
   methods: {
@@ -277,14 +280,17 @@ export default {
       this.showDialogDelete = true;
     },
     async DeleteItem() {
+      this.showLoading = true;
       const res = await AuthService.deleteReport(this.deleteId);
       if (res && res.status === "success") {
-        alert("Xóa thành công");
+        this.showLoading = false;
         setTimeout(() => {
+          alert("Xóa thành công");
           window.location.reload();
         }, 500);
       } else {
-        window.console.log("ko thành công");
+        this.showLoading = false;
+        alert("Xóa không thành công");
       }
     },
     Detail(item) {
